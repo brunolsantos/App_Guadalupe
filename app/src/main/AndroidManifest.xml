@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.phiin.app_guadalupe">
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+
+
+        <activity android:name=".ConfigurationActivity"
+            android:parentActivityName=".LoginActivity"
+            android:label="Configurações"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".OptionsActivity"
+            android:parentActivityName=".LoginActivity"
+            android:label="Opção"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".SellActivity"
+            android:parentActivityName=".LoginActivity"
+            android:label="Vendas"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".CheckoutActivity"
+            android:parentActivityName=".SellActivity"
+            android:label="Finalizar Compra"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".ProductionActivity"
+            android:parentActivityName=".SellActivity"
+            android:label="Produção"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".ProductListActivity"
+            android:parentActivityName=".LoginActivity"
+            android:label="Produtos"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".SelectedProductActivity"
+            android:parentActivityName=".ProductListActivity"
+            android:label="Produto"
+            android:theme="@style/AppTheme"/>
+
+    </application>
+
+</manifest>

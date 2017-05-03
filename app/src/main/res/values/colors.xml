@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color-->
+    <!--color name="line_color1">#CCCCCC</color>
+    <color name="line_color2">#E6E6E6</color-->
+    <color name="colorPrimary">#43A047</color>
+    <color name="colorPrimaryDark">#2E7D32</color>
+    <color name="colorAccent">#303F9F</color>
+    <color name="colorText">#FFFFFF</color>
+    <color name="table_title">#B3B3B3</color>
+    <color name="selected_row">#BBDEFB</color>
+
+    <color name="unavailable_product_bg">#FDCBD0</color>
+    <color name="available_product_bg">#FFFFFF</color>
+    <color name="finishing_product_bg">#FFF9C4</color>
+    <color name="error_product_bg">#8D6E63</color>
+    <color name="background_color_general">#FAFAFA</color>
+    <color name="text_enabled_color">#000000</color>
+
+
+</resources>

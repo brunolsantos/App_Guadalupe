@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Guadalupe</string>
+    <string name="Login">Login</string>
+    <string name="settings_new_menu">Settings</string>
+    <string name="quantity_hint">Quantidade</string>
+    <string name="unity_hint">Valor Unitario</string>
+    <string name="total_hint">Total</string>
+    <string name="product_hint">Produto</string>
+</resources>
