@@ -30,7 +30,7 @@
             android:theme="@style/AppTheme"/>
 
         <activity android:name=".SellActivity"
-            android:parentActivityName=".LoginActivity"
+            android:parentActivityName=".OptionsActivity"
             android:label="Vendas"
             android:theme="@style/AppTheme"/>
 

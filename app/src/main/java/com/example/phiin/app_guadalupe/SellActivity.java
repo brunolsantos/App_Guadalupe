@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,13 +42,35 @@ public class SellActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
         }
         loadTableValues();
+        Intent activityCall = getIntent();
+        login_type = activityCall.getExtras().getInt("login_type");
     }
 
     int row_index=1;
+    int login_type;
     ProductControl product_control = ProductControl.getInstance();
     ConnectionParams conn = ConnectionParams.getInstance();
     Message message = Message.getInstance();
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("login_type", login_type);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("login_type", login_type);
+                setResult(RESULT_OK, intent);
+                finish();
+                break;
+        }
+        return true;
+    }
 
     public void loadTableValues(){
         try{

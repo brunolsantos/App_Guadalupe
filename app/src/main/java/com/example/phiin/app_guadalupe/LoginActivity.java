@@ -98,6 +98,8 @@ public class LoginActivity extends AppCompatActivity {
         if(data_received[0][0].compareTo("OK") == 0){
             if((data_received[1][3].compareTo(password) == 0)){
                 result = Integer.parseInt(data_received[1][2]);
+                //APAGAR
+                result=0;
                 return result;
             }else{
                 return WRONG_PASSWORD;

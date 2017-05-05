@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import java.text.NumberFormat;
 
+import control.connection.ConnectionParams;
+import control.connection.Message;
+import control.connection.TCPConn;
 import control.product.Product;
 import control.product.ProductControl;
 
@@ -32,9 +35,17 @@ public class ProductionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_production);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getProducts(this.findViewById(android.R.id.content));
-        refreshRows();
+        try{
+            getProducts();
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(),"Erro: "+e.toString(),Toast.LENGTH_SHORT).show();
+        }
+        loadTableValues();
     }
     ProductControl product_control = ProductControl.getInstance();
+    ConnectionParams conn = ConnectionParams.getInstance();
+    Message message = Message.getInstance();
+
     int row_index=1;
     public void loadTableValues(){
         try{
@@ -227,6 +238,36 @@ public class ProductionActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Selecione um produto",Toast.LENGTH_SHORT).show();
         }
         refreshRows();
+    }
+
+    public void getProducts() throws Exception{
+        String data_to_send[][] = {{"2","","",""},{"","","",""},{"","","",""}};
+        String data_received[][];
+        TCPConn tcp = new TCPConn(conn.getIp(),conn.getPort());
+        message.setData_to_send(data_to_send);
+        data_received = tcp.execute().get();
+
+        TableLayout product_table = (TableLayout) findViewById(R.id.table_products);
+        if(product_table.getChildCount() == 1) {
+            product_control.getProductList().clear();
+            for (int i = 2; i < data_received.length; i++) {
+                Product product = new Product();
+                product.setProduct(data_received[i][2]);
+                product.setTotal(Integer.parseInt(data_received[i][0]));
+
+                if (product.getTotal() > 5) {
+                    product.setStatus_color(Product.available);
+                } else if ((product.getTotal() < 5) && (product.getTotal() != 0)) {
+                    product.setStatus_color(Product.finishing);
+                } else {
+                    product.setStatus_color(Product.unavailable);
+                }
+                product.setCurrently_selected(false);
+                product_control.addProduct(product);
+            }
+        }else{
+            refreshRows();
+        }
     }
 
 

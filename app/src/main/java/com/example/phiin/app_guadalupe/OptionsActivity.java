@@ -34,19 +34,16 @@ public class OptionsActivity extends AppCompatActivity {
                 production.setVisibility(View.GONE);
                 break;
         }
-
-
     }
 
     public void sellOnClick(View v){
         Intent goToSellActivity = new Intent(this, SellActivity.class);
-        //Intent goToSellActivity = new Intent(this, ProductListActivity.class);
-        final int result = 1;
+        goToSellActivity.putExtra("login_type", this.login_type);
         startActivity(goToSellActivity);
     }
     public void productionOnClick(View v){
         Intent goToProductionActivity = new Intent(this, ProductionActivity.class);
-        final int result = 1;
+        goToProductionActivity.putExtra("login_type", this.login_type);
         startActivity(goToProductionActivity);
     }
 }
