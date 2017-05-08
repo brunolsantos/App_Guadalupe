@@ -45,7 +45,7 @@ public class SelectedProductActivity extends AppCompatActivity {
         String string_total_price = NumberFormat.getCurrencyInstance()
                 .format(total_price);
 
-        product_name.setText(selected_product.getProduct());
+        product_name.setText(selected_product.getProductName());
         product_quantity.setText(String.valueOf(selected_product.getQuantity()));
         product_unit_value.setText(string_unit_price);
         product_total.setText(string_total_price);

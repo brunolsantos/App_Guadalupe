@@ -49,7 +49,7 @@ public class ProductListActivity extends AppCompatActivity {
 
             //PRODUCT NAME
             ((TextView)row.findViewById(R.id.product_name_list))
-                    .setText(product_control.getProductList().get(i).getProduct());
+                    .setText(product_control.getProductList().get(i).getProductName());
 
             //PRODUCT PRICE
             String price = String.valueOf(product_control.getProductList().get(i).getPrice_unit());
@@ -84,7 +84,7 @@ public class ProductListActivity extends AppCompatActivity {
                     }else{
                         String pName = product_control.getProductList()
                                 .get(position)
-                                .getProduct();
+                                .getProductName();
 
                         //EDIT PRODUCT
                         Intent goToSelectedProduct = new Intent(v.getContext(),SelectedProductActivity.class);

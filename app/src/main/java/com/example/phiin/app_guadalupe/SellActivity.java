@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.util.Locale;
 
 import control.connection.ConnectionParams;
 import control.connection.Message;
@@ -124,7 +127,7 @@ public class SellActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams textview_params =  (LinearLayout.LayoutParams)b.getLayoutParams();
                 b.setLayoutParams(textview_params);
                 b.setBackgroundColor(background_color);
-                String str = product_control.getProductList().get(i).getProduct();
+                String str = product_control.getProductList().get(i).getProductName();
                 b.setText(str);
                 b.setTextColor(Color.BLACK);
                 b.setGravity(Gravity.LEFT);
@@ -190,7 +193,7 @@ public class SellActivity extends AppCompatActivity {
                                     edit_button.setEnabled(true);
                                     cancel_edit_button.setEnabled(true);
                                     row_index = i;
-                                    product_name.setText(String.valueOf(product_control.getProductList().get(i).getProduct()));
+                                    product_name.setText(String.valueOf(product_control.getProductList().get(i).getProductName()));
                                     product_price.setText(NumberFormat.getCurrencyInstance().format(product_control.getProductList().get(i).getPrice_unit()));
                                     product_total.setText(NumberFormat.getCurrencyInstance().format(product_control.getProductList().get(i).getTotal()));
                                     if(product_control.getProductList().get(i).getQuantity() == 0){
@@ -240,19 +243,29 @@ public class SellActivity extends AppCompatActivity {
         Button cancel_edit_button = (Button)findViewById(R.id.cancel_product_edit);
 
         if(product_quantity_text.matches("")){
-            Toast.makeText(getApplicationContext(),"Digite a quantidade do produto",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),
+                    "Digite a quantidade do produto",
+                    Toast.LENGTH_SHORT).show();
         }else {
-            double unity_price = product_control.getProductList().get(row_index).getPrice_unit();
+            double unity_price = product_control.getProductList()
+                    .get(row_index).getPrice_unit();
             int new_quantity = Integer.parseInt(product_quantity.getText().toString());
+            int prod_quantityRegist = product_control.getProductList()
+                    .get(row_index).getQtdy_registered();
+            String prod_name = product_control.getProductList()
+                    .get(row_index).getProductName();
 
-            product_control.getProductList().get(row_index).setQuantity(new_quantity);
-            product_control.getProductList().get(row_index).setTotal(new_quantity * unity_price);
+            if(new_quantity <= prod_quantityRegist){
+                product_control.getProductList()
+                        .get(row_index).setQuantity(new_quantity);
+                product_control.getProductList()
+                        .get(row_index).setTotal(new_quantity * unity_price);
+            }else{
+                Toast.makeText(getApplicationContext(),
+                        "Quantidade disponível para compra: "+
+                        String.valueOf(prod_quantityRegist),Toast.LENGTH_SHORT).show();
+            }
 
-            //try {
-                //getProducts();
-            //}catch (Exception e){
-                //Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
-            //}
 
             cleanSelectedProduct();
             getTotalSpent();
@@ -285,33 +298,6 @@ public class SellActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),"Nova lista criada",Toast.LENGTH_SHORT).show();
     }
 
-    public void getProducts_old(View v){
-        TableLayout product_table = (TableLayout) findViewById(R.id.table_products);
-
-        //FIRST LOAD
-        if(product_table.getChildCount() == 1){
-            product_control.getProductList().clear();
-            Product refrigerante = new Product("Refrigerante",Double.parseDouble("7.40"),0,0,Product.available);
-            Product pastel = new Product("Pastel",Double.parseDouble("5.30"),0,0,Product.available);
-            Product pastel_carne = new Product("Pastel de carne",Double.parseDouble("5.35"),0,0,Product.available);
-            Product pastel_frango = new Product("Pastel de frango",Double.parseDouble("5.42"),0,0,Product.finishing);
-            Product pastel_queijo = new Product("Pastel de Queijo",Double.parseDouble("6.20"),0,0,Product.unavailable);
-
-            //this.product_list.add(refrigerante);
-            //this.product_list.add(pastel_carne);
-            //this.product_list.add(pastel);
-            //this.product_list.add(pastel_frango);
-            //this.product_list.add(pastel_queijo);
-            product_control.addProduct(refrigerante);
-            product_control.addProduct(pastel_carne);
-            product_control.addProduct(pastel);
-            product_control.addProduct(pastel_frango);
-            product_control.addProduct(pastel_queijo);
-        }else{
-            refreshRows(true);
-        }
-    }
-
     public void refreshRows(boolean cancel_edit){
         TableLayout product_table = (TableLayout) findViewById(R.id.table_products);
 
@@ -338,6 +324,7 @@ public class SellActivity extends AppCompatActivity {
         }
         if(has_item == true){
             Intent goToCheckout = new Intent(this, CheckoutActivity.class);
+            goToCheckout.putExtra("login_type", this.login_type);
             startActivity(goToCheckout);
         }else{
             Toast.makeText(getApplicationContext(),"Lista vazia",Toast.LENGTH_SHORT).show();
@@ -346,32 +333,50 @@ public class SellActivity extends AppCompatActivity {
     }
 
     public void getProducts() throws Exception{
-        String data_to_send[][] = {{"2","","",""},{"","","",""},{"","","",""}};
+        String data_to_send[][] = {{"2","","",""},{"","","",""},{"","","",""},{"","","",""}};
         String data_received[][];
         TCPConn tcp = new TCPConn(conn.getIp(),conn.getPort());
         message.setData_to_send(data_to_send);
         data_received = tcp.execute().get();
+        double d;
 
         TableLayout product_table = (TableLayout) findViewById(R.id.table_products);
         if(product_table.getChildCount() == 1) {
             product_control.getProductList().clear();
             for (int i = 2; i < data_received.length; i++) {
                 Product product = new Product();
-                product.setProduct(data_received[i][2]);
-                product.setTotal(Integer.parseInt(data_received[i][0]));
+                product.setCod(Integer.parseInt(data_received[i][0]));
+                product.setProductName(data_received[i][1]);
+                product.setQtdy_registered(Integer.parseInt(data_received[i][2]));
+                product.setTotal(Integer.parseInt(data_received[i][5]));
 
                 if (product.getTotal() > 5) {
                     product.setStatus_color(Product.available);
-                } else if ((product.getTotal() < 5) && (product.getTotal() != 0)) {
+                } else if ((product.getTotal() <= 5) && (product.getTotal() > 0)) {
                     product.setStatus_color(Product.finishing);
                 } else {
                     product.setStatus_color(Product.unavailable);
                 }
                 product.setCurrently_selected(false);
+
+                d = parseDecimal(data_received[i][3]);
+                product.setPrice_unit(d);
                 product_control.addProduct(product);
             }
         }else{
             refreshRows(true);
         }
+    }
+
+    public double parseDecimal(String input) throws ParseException {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.FRANCE);
+        ParsePosition parsePosition = new ParsePosition(0);
+        Number number = numberFormat.parse(input, parsePosition);
+
+        if(parsePosition.getIndex() != input.length()){
+            throw new ParseException("Invalid input", parsePosition.getIndex());
+        }
+
+        return number.doubleValue();
     }
 }

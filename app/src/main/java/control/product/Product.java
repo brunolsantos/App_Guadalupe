@@ -9,8 +9,11 @@ import java.io.Serializable;
  */
 
 public class Product implements Serializable{
-    private String product;
+    private int cod;
+    private String productName;
+    private int qtdy_registered;
     private double price_unit;
+
     private int quantity;
     private double total;
     private int status;
@@ -23,7 +26,7 @@ public class Product implements Serializable{
 
     public Product(){}
     public Product(String product, double price_unit, int quantity, int total, int status){
-        setProduct(product);
+        setProductName(product);
         setPrice_unit(price_unit);
         setQuantity(quantity);
         setTotal(total);
@@ -32,11 +35,11 @@ public class Product implements Serializable{
     }
 
 
-    public void setProduct(String product){
-        this.product = product;
+    public void setProductName(String productName){
+        this.productName = productName;
     }
-    public String getProduct(){
-        return this.product;
+    public String getProductName(){
+        return this.productName;
     }
 
     public void setPrice_unit(double price_unit){
@@ -90,4 +93,20 @@ public class Product implements Serializable{
 
     public int getRow() {return row;}
     public void setRow(int row) {this.row = row;}
+
+    public int getCod() {
+        return cod;
+    }
+
+    public void setCod(int cod) {
+        this.cod = cod;
+    }
+
+    public int getQtdy_registered() {
+        return qtdy_registered;
+    }
+
+    public void setQtdy_registered(int qtdy_registered) {
+        this.qtdy_registered = qtdy_registered;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.phiin.app_guadalupe;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -30,6 +32,28 @@ public class CheckoutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getProducts(this.findViewById(android.R.id.content));
         loadTableValues();
+        Intent activityCall = getIntent();
+        login_type = activityCall.getExtras().getInt("login_type");
+    }
+    int login_type;
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("login_type", login_type);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("login_type", login_type);
+                setResult(RESULT_OK, intent);
+                finish();
+                break;
+        }
+        return true;
     }
     ProductControl product_control = ProductControl.getInstance();
 
@@ -86,7 +110,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams textview_params =  (LinearLayout.LayoutParams)b.getLayoutParams();
                     b.setLayoutParams(textview_params);
                     b.setBackgroundColor(background_color);
-                    String str = product_control.getProductList().get(i).getProduct();
+                    String str = product_control.getProductList().get(i).getProductName();
                     b.setText(str);
                     b.setTextColor(Color.BLACK);
                     b.setGravity(Gravity.LEFT);

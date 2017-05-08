@@ -17,6 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.util.Locale;
 
 import control.connection.ConnectionParams;
 import control.connection.Message;
@@ -99,7 +102,7 @@ public class ProductionActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams textview_params =  (LinearLayout.LayoutParams)b.getLayoutParams();
                 b.setLayoutParams(textview_params);
                 b.setBackgroundColor(background_color);
-                String str = product_control.getProductList().get(i).getProduct();
+                String str = product_control.getProductList().get(i).getProductName();
                 b.setText(str);
                 b.setTextColor(Color.BLACK);
                 b.setGravity(Gravity.LEFT);
@@ -162,7 +165,7 @@ public class ProductionActivity extends AppCompatActivity {
                                     add_button.setEnabled(false);
                                     remove_edit_button.setEnabled(false);
                                     row_index = i;
-                                    product_name.setText(String.valueOf(product_control.getProductList().get(i).getProduct()));
+                                    product_name.setText(String.valueOf(product_control.getProductList().get(i).getProductName()));
                                     add_button.setEnabled(false);
                                     if(product_control.getProductList().get(i).getQuantity() == 0){
                                         product_quantity.setText("");
@@ -220,7 +223,7 @@ public class ProductionActivity extends AppCompatActivity {
         }else{
             Product newProduct = new Product();
             newProduct.setQuantity(Integer.parseInt(product_quantity.getText().toString()));
-            newProduct.setProduct(product_name.getText().toString());
+            newProduct.setProductName(product_name.getText().toString());
 
             newProduct.setStatus(Product.available);
 
@@ -241,34 +244,48 @@ public class ProductionActivity extends AppCompatActivity {
     }
 
     public void getProducts() throws Exception{
-        String data_to_send[][] = {{"2","","",""},{"","","",""},{"","","",""}};
+        String data_to_send[][] = {{"2","","",""},{"","","",""},{"","","",""},{"","","",""}};
         String data_received[][];
         TCPConn tcp = new TCPConn(conn.getIp(),conn.getPort());
         message.setData_to_send(data_to_send);
         data_received = tcp.execute().get();
+        double d;
 
         TableLayout product_table = (TableLayout) findViewById(R.id.table_products);
         if(product_table.getChildCount() == 1) {
             product_control.getProductList().clear();
             for (int i = 2; i < data_received.length; i++) {
                 Product product = new Product();
-                product.setProduct(data_received[i][2]);
-                product.setTotal(Integer.parseInt(data_received[i][0]));
+                product.setCod(Integer.parseInt(data_received[i][0]));
+                product.setProductName(data_received[i][1]);
+                product.setQtdy_registered(Integer.parseInt(data_received[i][2]));
+                product.setTotal(Integer.parseInt(data_received[i][5]));
 
                 if (product.getTotal() > 5) {
                     product.setStatus_color(Product.available);
-                } else if ((product.getTotal() < 5) && (product.getTotal() != 0)) {
+                } else if ((product.getTotal() <= 5) && (product.getTotal() > 0)) {
                     product.setStatus_color(Product.finishing);
                 } else {
                     product.setStatus_color(Product.unavailable);
                 }
                 product.setCurrently_selected(false);
+
+                d = parseDecimal(data_received[i][3]);
+                product.setPrice_unit(d);
                 product_control.addProduct(product);
             }
-        }else{
-            refreshRows();
         }
     }
 
+    public double parseDecimal(String input) throws ParseException {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.FRANCE);
+        ParsePosition parsePosition = new ParsePosition(0);
+        Number number = numberFormat.parse(input, parsePosition);
 
+        if(parsePosition.getIndex() != input.length()){
+            throw new ParseException("Invalid input", parsePosition.getIndex());
+        }
+
+        return number.doubleValue();
+    }
 }

@@ -95,17 +95,19 @@ public class LoginActivity extends AppCompatActivity {
         message.setData_to_send(data_to_send);
         data_received = tcp.execute().get();
         int result;
-        if(data_received[0][0].compareTo("OK") == 0){
-            if((data_received[1][3].compareTo(password) == 0)){
+
+        switch(data_received[0][0]) {
+            case "OK":
                 result = Integer.parseInt(data_received[1][2]);
                 //APAGAR
-                result=0;
+                result = 0;
                 return result;
-            }else{
+            case "PASSNOK":
                 return WRONG_PASSWORD;
-            }
-        }else{
-            return WRONG_USER;
+            case "USERNCAD":
+                return WRONG_USER;
+            default:
+                return WRONG_USER;
         }
     }
     public void loadProducts(){

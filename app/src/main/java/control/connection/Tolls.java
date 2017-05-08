@@ -76,13 +76,13 @@ public abstract class Tolls {
 	
 	
 	//transforma mensagem TCP em Matriz
-	public static String[][] UnFlattenFromString(String str){
+	public static String[][] UnFlattenFromString(String str) throws Exception{
 		int[] lin,col,size;
 		byte[] valor;
 		int pos,nlin,ncol,nsize;
 		String[][] dados;
-		
-		byte[] buffer = str.getBytes();
+		byte[] buffer = str.getBytes("ISO-8859-1");
+
 		
 		lin = new int[4];
 		col = new int[4];

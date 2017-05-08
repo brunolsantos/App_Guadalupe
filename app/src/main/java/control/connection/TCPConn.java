@@ -31,9 +31,11 @@ public class TCPConn extends AsyncTask<Void, Void, String[][]> {
 		 * Do network related stuff
 		 * return string response.
 		 */
+		String message_received[][];
 		try {
 			AbreConn();
-			message.setData_received(EnviaTCP(message.getData_to_send()));
+			message_received = EnviaTCP(message.getData_to_send());
+			message.setData_received(message_received);
 			FechaConn();
 			return message.getData_received();
 		} catch (Exception e) {
